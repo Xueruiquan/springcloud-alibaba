@@ -1,0 +1,53 @@
+server:
+  port: 9094
+
+spring:
+  application:
+    name: nacos-config-client
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.10.99:8848
+
+## 官方解释
+## 在命名空间详情处可以获取到 endpoint 和 namespace 的值
+#  spring.cloud.nacos.config.endpoint=${endpoint}
+#  spring.cloud.nacos.config.namespace=${namespace}
+#  # 推荐使用 RAM 账户的 accessKey 和 secretKey
+#  spring.cloud.nacos.config.access-key=${accessKey}
+#  spring.cloud.nacos.config.secret-key=${secretKey}
+#  # ACM 配置的 Data ID 等于 ${spring.application.name}.${spring.cloud.nacos.config.file-extension}
+#  # 指定配置的 Data ID 前缀，例如：
+#  spring.application.name=com.alibaba.nacos.example
+#  # 指定配置的 Data ID 后缀，支持 properties、yaml、yml，默认为 properties
+#  spring.cloud.nacos.config.file-extension=properties
+#  # 指定 ACM 配置的 Group，默认为 DEFAULT_GROUP
+#  spring.cloud.nacos.config.group=DEFAULT_GROUP
+#  https://www.alibabacloud.com/help/zh/doc-detail/94708.htm?spm=a2c63.p38356.b99.56.547b66ae7aDsVW
+#
+#  # Nacos Spring Cloud 中，dataId 的完整格式如下：
+#  ${prefix}-${spring.profile.active}.${file-extension}
+#  prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix来配置。
+#  spring.profile.active 即为当前环境对应的 profile，详情可以参考 Spring Boot文档。 注意：当 spring.profile.active 为空时，对应的连接符 - 也将不存在，dataId 的拼接格式变成 ${prefix}.${file-extension}
+#  file-exetension 为配置内容的数据格式，可以通过配置项 spring.cloud.nacos.config.file-extension 来配置。目前只支持 properties 和 yaml 类型。
+## @RefreshScope 实现配置自动更新
+## 服务启动控制台日志显示默认加载nacos-config-client.properties文件
+#Loading nacos data, dataId: 'nacos-config-client.properties', group: 'DEFAULT_GROUP'
+## spring-cloud-starter-alibaba-nacos-config 先加载bootstrap.yml文件
+## Spring Boot中application.yml与bootstrap.yml的区别
+#  Bootstrap.yml（bootstrap.properties）在application.yml（application.properties）之前加载，就像application.yml一样，但是用于应用程序上下文的引导阶段。它通常用于“使用Spring Cloud Config Server时，应在bootstrap.yml中指定spring.application.name和spring.cloud.config.server.git.uri”以及一些加密/解密信息。技术上，bootstrap.yml由父Spring ApplicationContext加载。父ApplicationContext被加载到使用application.yml的之前。
+
+#  Data ID中的nacos-config-client.properties ：对应客户端的配置spring.cloud.nacos.config.prefix，默认值为${spring.application.name}，即：服务名
+#  Data ID中的properties：对应客户端的配置spring.cloud.nacos.config.file-extension，默认值为properties
+#  Group的值DEFAULT_GROUP：对应客户端的配置spring.cloud.nacos.config.group，默认值为DEFAULT_GROUP
+#  在采用默认值的应用要加载的配置规则就是：
+#  Data ID=${spring.application.name}.properties，Group=DEFAULT_GROUP。
+#  # 如果我们不想通过服务名来加载，那么可以增加如下配置，就会加载到Data ID=example.properties，Group=DEFAULT_GROUP的配置内容了：spring.cloud.nacos.config.prefix=example
+#
+#  # 如果我们想要加载yaml格式的内容，而不是Properties格式的内容，那么可以通过如下配置，实现加载Data ID=example.yaml，Group=DEFAULT_GROUP的配置内容了：
+#  spring.cloud.nacos.config.prefix=example
+#  spring.cloud.nacos.config.file-extension=yaml
+#  # 如果我们对配置做了分组管理，那么可以通过如下配置，实现加载Data ID=example.yaml，Group=DEV_GROUP的配置内容了：
+#  spring.cloud.nacos.config.prefix=example
+#  spring.cloud.nacos.config.file-extension=yaml
+#  spring.cloud.nacos.config.group=DEV_GROUP

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: nacos-discovery-sentinel
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8888
+      datasource:
+        ds:
+          nacos:
+            server-addr: localhost:8848
+            dataId: ${spring.application.name}-sentinel
+            groupId: DEFAULT_GROUP
+            ruleType: flow
+
+server:
+  port: 9095

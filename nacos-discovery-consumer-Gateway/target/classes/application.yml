@@ -1,0 +1,35 @@
+server:
+  port: 9093
+
+spring:
+  application:
+    name: nacos-discovery-gateway-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.10.99:8848
+        metadata:
+          name: healthy
+    gateway:
+      routes:
+        - id: nacos-discovery-provider
+          uri: lb://nacos-discovery-provider
+          predicates:
+            - Path=/provider/**
+          filters:
+            - StripPrefix=1
+
+
+# LoadBalancerClientFilter在交换属性ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR中查找URI。
+# 如果url具有lb方案（即lb：// myservice），它将使用Spring Cloud LoadBalancerClient将名称（前一示例中的myservice）解析为实际主机和端口，并替换相同属性中的URI。
+# 未修改的原始URL将附加到ServerWebExchangeUtils.GATEWAY_ORIGINAL_REQUEST_URL_ATTR属性中的列表中。
+# 过滤器还将查看ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR属性以查看它是否等于lb，然后应用相同的规则。
+# https://cloud.spring.io/spring-cloud-gateway/spring-cloud-gateway.html#_loadbalancerclient_filter
+
+# StripPrefix GatewayFilter Factory采用一个参数，即部件。 parts参数指示在向下游发送之前从请求中剥离的路径中的部分数。
+# https://cloud.spring.io/spring-cloud-gateway/spring-cloud-gateway.html#_stripprefix_gatewayfilter_factory
+
+# predicates: - Path=/provider/**
+# filters: - StripPrefix=1
+# Path 中的provider除了使用 StripPrefix配置之外还可以使用context.path来配置；推介使用StripPrefix方式配置；
+# server.servlet.context.path=provider

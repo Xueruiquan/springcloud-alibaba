@@ -1,0 +1,10 @@
+server:
+  port: 9092
+
+spring:
+  application:
+    name: nacos-discovery-consumer-webflux
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.10.99:8848
